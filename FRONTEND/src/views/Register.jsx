@@ -1,112 +1,108 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ENDPOINT } from '../config/constans'
+import React, { useState } from "react";
+import axios from "axios";
+import { ENDPOINT } from "../config/constans";
 
-const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-const initialForm = {
-  email: 'docente@desafiolatam.com',
-  password: '123456',
-  rol: 'Seleccione un rol',
-  lenguage: 'Seleccione un Lenguage'
-}
+const Registro = () => {
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+    role: "",
+    lenguaje: "",
+  });
 
-const Register = () => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState(initialForm)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
 
-  const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value })
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleForm = (event) => {
-    event.preventDefault()
+    try {
+      const response = await axios.post(ENDPOINT.registro, user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (
-      !user.email.trim() ||
-      !user.password.trim() ||
-      user.rol === 'Seleccione un rol' ||
-      user.lenguage === 'Seleccione un Lenguage'
-    ) {
-      return window.alert('Todos los campos son obligatorias.')
+      if (response.status === 200) {
+        alert("Usuario registrado con éxito");
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(
+        "Error al registrar el usuario: " +
+          (error.response?.data?.message || error.message)
+      );
     }
-
-    if (!emailRegex.test(user.email)) {
-      return window.alert('El formato del email no es correcto!')
-    }
-
-    axios.post(ENDPOINT.users, user)
-      .then(() => {
-        window.alert('Usuario registrado con éxito 😀.')
-        navigate('/login')
-      })
-      .catch(({ response: { data } }) => {
-        console.error(data)
-        window.alert(`${data.message} 🙁.`)
-      })
-  }
-
-  useEffect(() => {
-    if (window.sessionStorage.getItem('token')) {
-      navigate('/perfil')
-    }
-  }, [])
+  };
 
   return (
-    <form onSubmit={handleForm} className='col-10 col-sm-6 col-md-3 m-auto mt-5'>
-      <h1>Registrar nuevo usuario</h1>
-      <hr />
-      <div className='form-group mt-1 '>
-        <label>Email address</label>
+    <form onSubmit={handleSubmit} className="col-10 col-sm-6 col-md-3 m-auto mt-5">
+      <h1 className="mb-4">Registrar nuevo usuario</h1>
+      <div className="mb-3">
+        <label htmlFor="email" className="form-label">Email address</label>
         <input
+          type="email"
+          id="email"
+          name="email"
           value={user.email}
-          onChange={handleUser}
-          type='email'
-          name='email'
-          className='form-control'
-          placeholder='Enter email'
+          onChange={handleChange}
+          className="form-control"
+          required
         />
       </div>
-      <div className='form-group mt-1 '>
-        <label>Password</label>
+      <div className="mb-3">
+        <label htmlFor="password" className="form-label">Password</label>
         <input
+          type="password"
+          id="password"
+          name="password"
           value={user.password}
-          onChange={handleUser}
-          type='password'
-          name='password'
-          className='form-control'
-          placeholder='Password'
+          onChange={handleChange}
+          className="form-control"
+          required
         />
       </div>
-      <div className='form-group mt-1 '>
-        <label>Rol</label>
+      <div className="mb-3">
+        <label htmlFor="role" className="form-label">Rol</label>
         <select
-          defaultValue={user.rol}
-          onChange={handleUser}
-          name='rol'
-          className='form-select'
+          id="role"
+          name="role"
+          value={user.role}
+          onChange={handleChange}
+          className="form-select"
+          required
         >
           <option disabled>Seleccione un rol</option>
-          <option value='Full Stack Developer'>Full Stack Developer</option>
-          <option value='Frontend Developer'>Frontend Developer</option>
-          <option value='Backend Developer'>Backend Developer</option>
+          <option value="Full Stack Developer">Full Stack Developer</option>
+          <option value="Frontend Developer">Frontend Developer</option>
+          <option value="Backend Developer">Backend Developer</option>
         </select>
       </div>
-      <div className='form-group mt-1'>
-        <label>Lenguage</label>
+      <div className="mb-3">
+        <label htmlFor="lenguaje" className="form-label">Lenguaje</label>
         <select
-          defaultValue={user.lenguage}
-          onChange={handleUser}
-          name='lenguage'
-          className='form-select'
+          id="lenguaje"
+          name="lenguaje"
+          value={user.lenguaje}
+          onChange={handleChange}
+          className="form-select"
+          required
         >
-          <option disabled>Seleccione un Lenguage</option>
-          <option value='JavaScript'>JavaScript</option>
-          <option value='Python'>Python</option>
-          <option value='Ruby'>Ruby</option>
+          <option disabled>Seleccione un Lenguaje</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="Python">Python</option>
+          <option value="Ruby">Ruby</option>
         </select>
       </div>
-      <button type='submit' className='btn btn-light mt-3'>Registrarme</button>
+      <button type="submit" className="btn btn-primary mt-3">Registrarme</button>
     </form>
-  )
-}
+  );
+};
 
-export default Register
+export default Registro;

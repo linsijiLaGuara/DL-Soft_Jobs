@@ -7,7 +7,7 @@ import Navigation from './components/Navigation'
 import Home from './views/Home'
 import Registro from './views/Register'
 import Login from './views/Login'
-import Perfil from './views/Profile'
+import Profile from './views/Profile'
 
 const App = () => {
   const globalState = useDeveloper()
@@ -20,7 +20,7 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/registrarse' element={<Registro />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/perfil' element={<Perfil />} />
+          <Route path='/perfil' element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </Context.Provider>
